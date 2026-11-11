@@ -24,3 +24,4 @@ $pageTitle = $pageTitle ?? 'Agriculture Information System';
 <hr>
 <?php endif; ?>
 <h1><?= e($pageTitle) ?></h1>
+<?= flash_show() ?>

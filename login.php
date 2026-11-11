@@ -28,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([':username' => $username]);
             $user = $stmt->fetch();
 
-            // Same message for unknown user and wrong password (no user enumeration)
             if ($user && password_verify($password, $user['password_hash'])) {
                 session_regenerate_id(true);
                 $_SESSION['user_id']   = $user['user_id'];
@@ -61,4 +60,6 @@ include __DIR__ . '/layout_header.php';
     </p>
     <button type="submit">Log in</button>
 </form>
-<?php include __DIR__ . '/layout_footer.php'; ?>
+<?php
+include __DIR__ . '/layout_footer.php';
+?>

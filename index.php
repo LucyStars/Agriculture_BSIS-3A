@@ -27,4 +27,6 @@ include __DIR__ . '/layout_header.php';
         <tr><td><?= e($label) ?></td><td><?= isset($counts[$table]) ? e($counts[$table]) : '-' ?></td></tr>
     <?php endforeach; ?>
 </table>
-<?php include __DIR__ . '/layout_footer.php'; ?>
+<?php
+include __DIR__ . '/layout_footer.php';
+?>

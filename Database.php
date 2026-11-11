@@ -6,7 +6,6 @@ class Database {
 		$this->env = $this->loadEnv();
 	}
 
-	// Read the settings from the .env file (same folder, or the folder above)
 	private function loadEnv(): array {
 		$paths = [__DIR__ . "/.env", dirname(__DIR__) . "/.env"];
 
@@ -20,7 +19,6 @@ class Database {
 			foreach (file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
 				$line = trim($line);
 
-				// skip comments and lines without an equal sign
 				if ($line === "" || $line[0] === "#" || !str_contains($line, "=")) {
 					continue;
 				}
@@ -28,7 +26,6 @@ class Database {
 				[$key, $value] = explode("=", $line, 2);
 				$value = trim($value);
 
-				// remove quotes around the value, if there are any
 				if (strlen($value) >= 2 && $value[0] === $value[-1] && ($value[0] === '"' || $value[0] === "'")) {
 					$value = substr($value, 1, -1);
 				}
@@ -67,7 +64,6 @@ class Database {
 			return $pdo;
 
 		} catch (PDOException $e) {
-			// the real error goes to the server log, not to the user
 			error_log("Database connection failed: " . $e->getMessage());
 
 			die($debug

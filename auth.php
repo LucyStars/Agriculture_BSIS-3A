@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/Database.php';
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -30,7 +31,6 @@ function require_login(): void
     }
 }
 
-// Usage: require_role('Administrator');
 function require_role(string $role): void
 {
     require_login();
@@ -49,7 +49,6 @@ function is_admin(): bool
     return is_logged_in() && $_SESSION['role_name'] === 'Administrator';
 }
 
-// CSRF protection for forms
 function csrf_token(): string
 {
     if (empty($_SESSION['csrf'])) {
@@ -67,4 +66,20 @@ function csrf_check(): bool
 {
     return isset($_POST['csrf'], $_SESSION['csrf'])
         && hash_equals($_SESSION['csrf'], $_POST['csrf']);
+}
+
+function flash_set(string $type, string $message): void
+{
+    $_SESSION['flash'] = ['type' => $type, 'message' => $message];
+}
+
+function flash_show(): string
+{
+    if (empty($_SESSION['flash'])) {
+        return '';
+    }
+    $flash = $_SESSION['flash'];
+    unset($_SESSION['flash']);
+    $color = $flash['type'] === 'success' ? 'green' : 'red';
+    return '<p style="color:' . $color . '"><strong>' . e($flash['message']) . '</strong></p>';
 }
