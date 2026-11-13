@@ -83,3 +83,20 @@ function flash_show(): string
     $color = $flash['type'] === 'success' ? 'green' : 'red';
     return '<p style="color:' . $color . '"><strong>' . e($flash['message']) . '</strong></p>';
 }
+
+function valid_date(string $date): bool
+{
+    $d = DateTime::createFromFormat('Y-m-d', $date);
+    return $d !== false && $d->format('Y-m-d') === $date;
+}
+
+function lookup_options(PDO $pdo, string $table, string $idColumn, string $labelColumn): array
+{
+    return $pdo->query("SELECT $idColumn, $labelColumn FROM $table ORDER BY $idColumn")
+               ->fetchAll(PDO::FETCH_KEY_PAIR);
+}
+
+function is_duplicate_error(Throwable $e): bool
+{
+    return $e instanceof PDOException && $e->getCode() === '23505';
+}
