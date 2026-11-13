@@ -4,6 +4,7 @@ require_login();
 
 $search = trim($_GET['search'] ?? '');
 $irrigation = (int)($_GET['irrigation'] ?? 0);
+$soil = (int)($_GET['soil'] ?? 0);
 $sortable = [
     'id'         => 'f.farm_id',
     'name'       => 'f.farm_name',
@@ -20,15 +21,16 @@ $page = max(1, (int)($_GET['page'] ?? 1));
 
 $farms = [];
 $irrigations = [];
+$soils = [];
 $totalRows = 0;
 $totalPages = 1;
 $error = '';
 
 function link_with(array $change): string
 {
-    global $search, $irrigation, $sort, $dir, $page;
+    global $search, $irrigation, $soil, $sort, $dir, $page;
     $query = array_merge(
-        ['search' => $search, 'irrigation' => $irrigation, 'sort' => $sort, 'dir' => $dir, 'page' => $page],
+        ['search' => $search, 'irrigation' => $irrigation, 'soil' => $soil, 'sort' => $sort, 'dir' => $dir, 'page' => $page],
         $change
     );
     return '?' . e(http_build_query($query));
@@ -38,6 +40,7 @@ try {
     $pdo = (new Database())->connect();
 
     $irrigations = lookup_options($pdo, 'farm_irrigation_type', 'irrigation_type_id', 'irrigation_type_description');
+    $soils = lookup_options($pdo, 'farm_soil_type', 'soil_type_id', 'soil_type_description');
 
     $from = 'FROM farm f
              JOIN farmer fr ON fr.farmer_id = f.farmer_id
@@ -57,6 +60,10 @@ try {
     if ($irrigation > 0) {
         $conditions[] = 'f.irrigation_type_id = :irrigation';
         $params[':irrigation'] = $irrigation;
+    }
+    if ($soil > 0) {
+        $conditions[] = 'f.soil_type_id = :soil';
+        $params[':soil'] = $soil;
     }
     $where = $conditions ? 'WHERE ' . implode(' AND ', $conditions) : '';
 
@@ -110,10 +117,16 @@ include __DIR__ . '/layout_header.php';
             <option value="<?= e($id) ?>" <?= $id === $irrigation ? 'selected' : '' ?>><?= e($label) ?></option>
         <?php endforeach; ?>
     </select>
+    <select name="soil">
+        <option value="0">All soil types</option>
+        <?php foreach ($soils as $id => $label): ?>
+            <option value="<?= e($id) ?>" <?= $id === $soil ? 'selected' : '' ?>><?= e($label) ?></option>
+        <?php endforeach; ?>
+    </select>
     <input type="hidden" name="sort" value="<?= e($sort) ?>">
     <input type="hidden" name="dir" value="<?= e($dir) ?>">
     <button type="submit">Search</button>
-    <?php if ($search !== '' || $irrigation > 0): ?><a href="farms.php">Clear</a><?php endif; ?>
+    <?php if ($search !== '' || $irrigation > 0 || $soil > 0): ?><a href="farms.php">Clear</a><?php endif; ?>
 </form>
 
 <p><a href="farm_form.php">+ Add Farm</a></p>
