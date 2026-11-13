@@ -4,15 +4,17 @@ require_login();
 
 $search = trim($_GET['search'] ?? '');
 $grade = (int)($_GET['grade'] ?? 0);
+$remark = (int)($_GET['remark'] ?? 0);
 $sortable = [
-    'id'    => 'h.harvest_id',
-    'farm'  => 'f.farm_name',
-    'crop'  => 'c.crop_name',
-    'date'  => 'h.harvest_date',
-    'qty'   => 'h.quantity_kg',
-    'price' => 'h.selling_price_per_kg',
-    'value' => '(h.quantity_kg * h.selling_price_per_kg)',
-    'grade' => 'g.quality_grade_description',
+    'id'      => 'h.harvest_id',
+    'farm'    => 'f.farm_name',
+    'crop'    => 'c.crop_name',
+    'date'    => 'h.harvest_date',
+    'qty'     => 'h.quantity_kg',
+    'price'   => 'h.selling_price_per_kg',
+    'value'   => '(h.quantity_kg * h.selling_price_per_kg)',
+    'grade'   => 'g.quality_grade_description',
+    'remarks' => 'r.remarks_description',
 ];
 $sort = array_key_exists($_GET['sort'] ?? '', $sortable) ? $_GET['sort'] : 'id';
 $dir = (($_GET['dir'] ?? '') === 'desc') ? 'desc' : 'asc';
@@ -21,15 +23,16 @@ $page = max(1, (int)($_GET['page'] ?? 1));
 
 $harvests = [];
 $grades = [];
+$remarks = [];
 $totalRows = 0;
 $totalPages = 1;
 $error = '';
 
 function link_with(array $change): string
 {
-    global $search, $grade, $sort, $dir, $page;
+    global $search, $grade, $remark, $sort, $dir, $page;
     $query = array_merge(
-        ['search' => $search, 'grade' => $grade, 'sort' => $sort, 'dir' => $dir, 'page' => $page],
+        ['search' => $search, 'grade' => $grade, 'remark' => $remark, 'sort' => $sort, 'dir' => $dir, 'page' => $page],
         $change
     );
     return '?' . e(http_build_query($query));
@@ -39,6 +42,7 @@ try {
     $pdo = (new Database())->connect();
 
     $grades = lookup_options($pdo, 'harvest_quality_grade', 'quality_grade_id', 'quality_grade_description');
+    $remarks = lookup_options($pdo, 'harvest_remark', 'remarks_id', 'remarks_description');
 
     $from = 'FROM harvest h
              JOIN planting p ON p.planting_id = h.planting_id
@@ -58,6 +62,10 @@ try {
     if ($grade > 0) {
         $conditions[] = 'h.quality_grade_id = :grade';
         $params[':grade'] = $grade;
+    }
+    if ($remark > 0) {
+        $conditions[] = 'h.remarks_id = :remark';
+        $params[':remark'] = $remark;
     }
     $where = $conditions ? 'WHERE ' . implode(' AND ', $conditions) : '';
 
@@ -112,10 +120,16 @@ include __DIR__ . '/layout_header.php';
             <option value="<?= e($id) ?>" <?= $id === $grade ? 'selected' : '' ?>><?= e($label) ?></option>
         <?php endforeach; ?>
     </select>
+    <select name="remark">
+        <option value="0">All remarks</option>
+        <?php foreach ($remarks as $id => $label): ?>
+            <option value="<?= e($id) ?>" <?= $id === $remark ? 'selected' : '' ?>><?= e($label) ?></option>
+        <?php endforeach; ?>
+    </select>
     <input type="hidden" name="sort" value="<?= e($sort) ?>">
     <input type="hidden" name="dir" value="<?= e($dir) ?>">
     <button type="submit">Search</button>
-    <?php if ($search !== '' || $grade > 0): ?><a href="harvests.php">Clear</a><?php endif; ?>
+    <?php if ($search !== '' || $grade > 0 || $remark > 0): ?><a href="harvests.php">Clear</a><?php endif; ?>
 </form>
 
 <p><a href="harvest_form.php">+ Add Harvest</a></p>
@@ -130,7 +144,7 @@ include __DIR__ . '/layout_header.php';
         <th><?= sort_header('Price per kg', 'price') ?></th>
         <th><?= sort_header('Estimated value', 'value') ?></th>
         <th><?= sort_header('Grade', 'grade') ?></th>
-        <th>Remarks</th>
+        <th><?= sort_header('Remarks', 'remarks') ?></th>
         <th>Actions</th>
     </tr>
     <?php foreach ($harvests as $h): ?>
