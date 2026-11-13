@@ -4,6 +4,7 @@ require_login();
 
 $search = trim($_GET['search'] ?? '');
 $category = (int)($_GET['category'] ?? 0);
+$season = (int)($_GET['season'] ?? 0);
 $sortable = [
     'id'       => 'c.crop_id',
     'name'     => 'c.crop_name',
@@ -19,15 +20,16 @@ $page = max(1, (int)($_GET['page'] ?? 1));
 
 $crops = [];
 $categories = [];
+$seasons = [];
 $totalRows = 0;
 $totalPages = 1;
 $error = '';
 
 function link_with(array $change): string
 {
-    global $search, $category, $sort, $dir, $page;
+    global $search, $category, $season, $sort, $dir, $page;
     $query = array_merge(
-        ['search' => $search, 'category' => $category, 'sort' => $sort, 'dir' => $dir, 'page' => $page],
+        ['search' => $search, 'category' => $category, 'season' => $season, 'sort' => $sort, 'dir' => $dir, 'page' => $page],
         $change
     );
     return '?' . e(http_build_query($query));
@@ -37,6 +39,7 @@ try {
     $pdo = (new Database())->connect();
 
     $categories = lookup_options($pdo, 'crop_category', 'category_id', 'category_description');
+    $seasons = lookup_options($pdo, 'crop_recommended_season', 'recommended_season_id', 'recommended_season_description');
 
     $from = 'FROM crop c
              JOIN crop_category cc ON cc.category_id = c.category_id
@@ -52,6 +55,10 @@ try {
     if ($category > 0) {
         $conditions[] = 'c.category_id = :category';
         $params[':category'] = $category;
+    }
+    if ($season > 0) {
+        $conditions[] = 'c.recommended_season_id = :season';
+        $params[':season'] = $season;
     }
     $where = $conditions ? 'WHERE ' . implode(' AND ', $conditions) : '';
 
@@ -106,10 +113,16 @@ include __DIR__ . '/layout_header.php';
             <option value="<?= e($id) ?>" <?= $id === $category ? 'selected' : '' ?>><?= e($label) ?></option>
         <?php endforeach; ?>
     </select>
+    <select name="season">
+        <option value="0">All seasons</option>
+        <?php foreach ($seasons as $id => $label): ?>
+            <option value="<?= e($id) ?>" <?= $id === $season ? 'selected' : '' ?>><?= e($label) ?></option>
+        <?php endforeach; ?>
+    </select>
     <input type="hidden" name="sort" value="<?= e($sort) ?>">
     <input type="hidden" name="dir" value="<?= e($dir) ?>">
     <button type="submit">Search</button>
-    <?php if ($search !== '' || $category > 0): ?><a href="crops.php">Clear</a><?php endif; ?>
+    <?php if ($search !== '' || $category > 0 || $season > 0): ?><a href="crops.php">Clear</a><?php endif; ?>
 </form>
 
 <p><a href="crop_form.php">+ Add Crop</a></p>
@@ -162,4 +175,4 @@ include __DIR__ . '/layout_header.php';
 </p>
 <?php
 include __DIR__ . '/layout_footer.php';
-?>s
+?>
