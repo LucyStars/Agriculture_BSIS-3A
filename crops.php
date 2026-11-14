@@ -103,17 +103,17 @@ function sort_header(string $label, string $key): string
 $pageTitle = 'Crops';
 include __DIR__ . '/layout_header.php';
 ?>
-<?php if ($error): ?><p style="color:red"><?= e($error) ?></p><?php endif; ?>
+<?php if ($error): ?><div class="alert alert-danger"><?= e($error) ?></div><?php endif; ?>
 
-<form method="get">
-    <input type="text" name="search" value="<?= e($search) ?>" placeholder="Search crop or variety">
-    <select name="category">
+<form method="get" class="filter-bar">
+    <input class="form-control" type="text" name="search" value="<?= e($search) ?>" placeholder="Search crop or variety">
+    <select class="form-select" name="category">
         <option value="0">All categories</option>
         <?php foreach ($categories as $id => $label): ?>
             <option value="<?= e($id) ?>" <?= $id === $category ? 'selected' : '' ?>><?= e($label) ?></option>
         <?php endforeach; ?>
     </select>
-    <select name="season">
+    <select class="form-select" name="season">
         <option value="0">All seasons</option>
         <?php foreach ($seasons as $id => $label): ?>
             <option value="<?= e($id) ?>" <?= $id === $season ? 'selected' : '' ?>><?= e($label) ?></option>
@@ -121,14 +121,15 @@ include __DIR__ . '/layout_header.php';
     </select>
     <input type="hidden" name="sort" value="<?= e($sort) ?>">
     <input type="hidden" name="dir" value="<?= e($dir) ?>">
-    <button type="submit">Search</button>
-    <?php if ($search !== '' || $category > 0 || $season > 0): ?><a href="crops.php">Clear</a><?php endif; ?>
+    <button type="submit" class="btn btn-primary">Search</button>
+    <?php if ($search !== '' || $category > 0 || $season > 0): ?><a class="btn btn-outline-secondary" href="crops.php">Clear</a><?php endif; ?>
 </form>
 
-<p><a href="crop_form.php">+ Add Crop</a></p>
+<p><a class="btn btn-primary" href="crop_form.php">+ Add Crop</a></p>
 
-<table border="1" cellpadding="6">
-    <tr>
+<div class="table-responsive">
+<table class="table table-striped table-hover align-middle mb-0">
+    <thead class="table-head"><tr>
         <th><?= sort_header('ID', 'id') ?></th>
         <th><?= sort_header('Crop', 'name') ?></th>
         <th><?= sort_header('Variety', 'variety') ?></th>
@@ -136,7 +137,7 @@ include __DIR__ . '/layout_header.php';
         <th><?= sort_header('Growing days', 'days') ?></th>
         <th><?= sort_header('Recommended season', 'season') ?></th>
         <th>Actions</th>
-    </tr>
+    </tr></thead>
     <?php foreach ($crops as $c): ?>
         <tr>
             <td><?= e($c['crop_id']) ?></td>
@@ -146,14 +147,14 @@ include __DIR__ . '/layout_header.php';
             <td><?= e($c['growing_period_days']) ?></td>
             <td><?= e($c['recommended_season_description']) ?></td>
             <td>
-                <a href="crop_view.php?id=<?= e($c['crop_id']) ?>">View</a>
-                <a href="crop_form.php?id=<?= e($c['crop_id']) ?>">Edit</a>
+                <a class="btn btn-sm btn-outline-success" href="crop_view.php?id=<?= e($c['crop_id']) ?>">View</a>
+                <a class="btn btn-sm btn-warning" href="crop_form.php?id=<?= e($c['crop_id']) ?>">Edit</a>
                 <?php if (is_admin()): ?>
                     <form method="post" action="crop_delete.php" style="display:inline"
                           onsubmit="return confirm('Delete this crop?');">
                         <?= csrf_field() ?>
                         <input type="hidden" name="id" value="<?= e($c['crop_id']) ?>">
-                        <button type="submit">Delete</button>
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                     </form>
                 <?php endif; ?>
             </td>
@@ -163,16 +164,24 @@ include __DIR__ . '/layout_header.php';
         <tr><td colspan="7">No crops found.</td></tr>
     <?php endif; ?>
 </table>
+</div>
 
-<p>
-    Page <?= e($page) ?> of <?= e($totalPages) ?> (<?= e($totalRows) ?> crops)
-    <?php if ($page > 1): ?>| <a href="<?= link_with(['page' => $page - 1]) ?>">Previous</a><?php endif; ?>
-    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-        <?php if ($i === $page): ?>| <strong><?= e($i) ?></strong>
-        <?php else: ?>| <a href="<?= link_with(['page' => $i]) ?>"><?= e($i) ?></a><?php endif; ?>
-    <?php endfor; ?>
-    <?php if ($page < $totalPages): ?>| <a href="<?= link_with(['page' => $page + 1]) ?>">Next</a><?php endif; ?>
-</p>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
+    <span>Page <?= e($page) ?> of <?= e($totalPages) ?> (<?= e($totalRows) ?> crops)</span>
+    <nav aria-label="Pages">
+        <ul class="pagination mb-0">
+            <?php if ($page > 1): ?>
+                <li class="page-item"><a class="page-link" href="<?= link_with(['page' => $page - 1]) ?>">Previous</a></li>
+            <?php endif; ?>
+            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                <li class="page-item <?= $i === $page ? 'active' : '' ?>"><a class="page-link" href="<?= link_with(['page' => $i]) ?>"><?= e($i) ?></a></li>
+            <?php endfor; ?>
+            <?php if ($page < $totalPages): ?>
+                <li class="page-item"><a class="page-link" href="<?= link_with(['page' => $page + 1]) ?>">Next</a></li>
+            <?php endif; ?>
+        </ul>
+    </nav>
+</div>
 <?php
 include __DIR__ . '/layout_footer.php';
 ?>

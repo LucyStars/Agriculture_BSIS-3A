@@ -43,21 +43,24 @@ try {
 $pageTitle = 'Crop Details';
 include __DIR__ . '/layout_header.php';
 ?>
-<table border="1" cellpadding="6">
-    <tr><th align="left">ID</th><td><?= e($crop['crop_id']) ?></td></tr>
-    <tr><th align="left">Crop</th><td><?= e($crop['crop_name']) ?></td></tr>
-    <tr><th align="left">Variety</th><td><?= e($crop['variety']) ?></td></tr>
-    <tr><th align="left">Category</th><td><?= e($crop['category_description']) ?></td></tr>
-    <tr><th align="left">Growing period (days)</th><td><?= e($crop['growing_period_days']) ?></td></tr>
-    <tr><th align="left">Recommended season</th><td><?= e($crop['recommended_season_description']) ?></td></tr>
-    <tr><th align="left">Record created</th><td><?= e($crop['created_at']) ?></td></tr>
-    <tr><th align="left">Last updated</th><td><?= e($crop['updated_at']) ?></td></tr>
+<div class="table-responsive">
+<table class="table table-striped table-hover align-middle mb-0">
+    <tr><th class="text-nowrap">ID</th><td><?= e($crop['crop_id']) ?></td></tr>
+    <tr><th class="text-nowrap">Crop</th><td><?= e($crop['crop_name']) ?></td></tr>
+    <tr><th class="text-nowrap">Variety</th><td><?= e($crop['variety']) ?></td></tr>
+    <tr><th class="text-nowrap">Category</th><td><?= e($crop['category_description']) ?></td></tr>
+    <tr><th class="text-nowrap">Growing period (days)</th><td><?= e($crop['growing_period_days']) ?></td></tr>
+    <tr><th class="text-nowrap">Recommended season</th><td><?= e($crop['recommended_season_description']) ?></td></tr>
+    <tr><th class="text-nowrap">Record created</th><td><?= e($crop['created_at']) ?></td></tr>
+    <tr><th class="text-nowrap">Last updated</th><td><?= e($crop['updated_at']) ?></td></tr>
 </table>
+</div>
 
 <h2>Plantings of this crop (<?= e(count($plantings)) ?>)</h2>
 <?php if ($plantings): ?>
-    <table border="1" cellpadding="6">
-        <tr><th>ID</th><th>Farm</th><th>Planting date</th><th>Area planted (ha)</th><th>Status</th></tr>
+    <div class="table-responsive">
+<table class="table table-striped table-hover align-middle mb-0">
+        <thead class="table-head"><tr><th>ID</th><th>Farm</th><th>Planting date</th><th>Area planted (ha)</th><th>Status</th></tr></thead>
         <?php foreach ($plantings as $p): ?>
             <tr>
                 <td><a href="planting_view.php?id=<?= e($p['planting_id']) ?>"><?= e($p['planting_id']) ?></a></td>
@@ -68,13 +71,14 @@ include __DIR__ . '/layout_header.php';
             </tr>
         <?php endforeach; ?>
     </table>
+</div>
 <?php else: ?>
     <p>This crop has not been planted yet.</p>
 <?php endif; ?>
 
 <p>
-    <a href="crop_form.php?id=<?= e($crop['crop_id']) ?>">Edit</a> |
-    <a href="crops.php">Back to list</a>
+    <a class="btn btn-sm btn-warning" href="crop_form.php?id=<?= e($crop['crop_id']) ?>">Edit</a> |
+    <a class="btn btn-outline-secondary" href="crops.php">Back to list</a>
 </p>
 <?php
 include __DIR__ . '/layout_footer.php';

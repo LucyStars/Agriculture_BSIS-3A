@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/auth.php';
 
-const CHART_COLORS = ['#2e7d32', '#f9a825', '#1565c0', '#6a1b9a', '#c62828', '#00838f', '#ef6c00', '#455a64'];
+const CHART_COLORS = ['#1b5e20', '#b8860b', '#558b2f', '#8d6e00', '#33691e', '#c9a227', '#2e7d32', '#7a5c00'];
 
 function chart_nice_max(float $max): float
 {

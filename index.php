@@ -100,84 +100,88 @@ $monthLabels = array_map(fn($ym) => date('M y', strtotime($ym . '-01')), array_c
 $pageTitle = 'Dashboard';
 include __DIR__ . '/layout_header.php';
 ?>
-<p>Welcome, <?= e($_SESSION['full_name']) ?>.</p>
-<?php if ($error): ?><p style="color:red"><?= e($error) ?></p><?php endif; ?>
+<p class="text-muted">Welcome, <?= e($_SESSION['full_name']) ?>.</p>
+<?php if ($error): ?><div class="alert alert-danger"><?= e($error) ?></div><?php endif; ?>
 
-<h2>Totals</h2>
-<div style="overflow-x:auto">
-<table border="1" cellpadding="6">
-    <tr>
-        <?php foreach ($tables as $table => [$label, $page]): ?>
-            <th><a href="<?= e($page) ?>"><?= e($label) ?></a></th>
-        <?php endforeach; ?>
-        <th>Total harvested (kg)</th>
-        <th>Estimated harvest value</th>
-    </tr>
-    <tr>
-        <?php foreach ($tables as $table => $info): ?>
-            <td align="center"><?= isset($counts[$table]) ? e($counts[$table]) : '-' ?></td>
-        <?php endforeach; ?>
-        <td align="center"><?= e(number_format($totalKg, 2)) ?></td>
-        <td align="center"><?= e(number_format($totalValue, 2)) ?></td>
-    </tr>
-</table>
+<div class="stats">
+    <?php foreach ($tables as $table => [$label, $page]): ?>
+        <a class="stat" href="<?= e($page) ?>">
+            <div class="num"><?= isset($counts[$table]) ? e($counts[$table]) : '-' ?></div>
+            <div class="lbl"><?= e($label) ?></div>
+        </a>
+    <?php endforeach; ?>
+    <div class="stat">
+        <div class="num"><?= e(number_format($totalKg, 2)) ?></div>
+        <div class="lbl">Total harvested (kg)</div>
+    </div>
+    <div class="stat">
+        <div class="num"><?= e(number_format($totalValue, 2)) ?></div>
+        <div class="lbl">Estimated harvest value</div>
+    </div>
 </div>
 
-<h2>Charts</h2>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(400px,100%),1fr));gap:16px">
-    <div style="border:1px solid #ccc;padding:10px">
-        <h3>Plantings by status</h3>
+<div class="z-grid">
+    <section class="panel">
+        <h2>Plantings by status</h2>
         <?= chart_donut(array_column($byStatus, 'status_description'), array_map('intval', array_column($byStatus, 'total'))) ?>
-    </div>
-    <div style="border:1px solid #ccc;padding:10px">
-        <h3>Harvested quantity per month (kg)</h3>
+    </section>
+
+    <section class="panel">
+        <h2>Recent plantings</h2>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-sm align-middle mb-0">
+                <thead class="table-head"><tr><th>ID</th><th>Farm</th><th>Crop</th><th>Planting date</th><th>Status</th></tr></thead>
+                <?php foreach ($recentPlantings as $p): ?>
+                    <tr>
+                        <td><a href="planting_view.php?id=<?= e($p['planting_id']) ?>"><?= e($p['planting_id']) ?></a></td>
+                        <td><?= e($p['farm_name']) ?></td>
+                        <td><?= e($p['crop_name']) ?></td>
+                        <td><?= e($p['planting_date']) ?></td>
+                        <td><?= e($p['status_description']) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                <?php if (!$recentPlantings): ?><tr><td colspan="5">No plantings yet.</td></tr><?php endif; ?>
+            </table>
+        </div>
+        <a class="btn btn-sm btn-outline-success" href="plantings.php">All plantings</a>
+    </section>
+
+    <section class="panel">
+        <h2>Recent harvests</h2>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-sm align-middle mb-0">
+                <thead class="table-head"><tr><th>ID</th><th>Farm</th><th>Crop</th><th>Harvest date</th><th class="text-end">Quantity (kg)</th></tr></thead>
+                <?php foreach ($recentHarvests as $h): ?>
+                    <tr>
+                        <td><a href="harvest_view.php?id=<?= e($h['harvest_id']) ?>"><?= e($h['harvest_id']) ?></a></td>
+                        <td><?= e($h['farm_name']) ?></td>
+                        <td><?= e($h['crop_name']) ?></td>
+                        <td><?= e($h['harvest_date']) ?></td>
+                        <td class="text-end"><?= e(number_format((float)$h['quantity_kg'], 2)) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                <?php if (!$recentHarvests): ?><tr><td colspan="5">No harvests yet.</td></tr><?php endif; ?>
+            </table>
+        </div>
+        <a class="btn btn-sm btn-outline-success" href="harvests.php">All harvests</a>
+        <a class="btn btn-sm btn-outline-success" href="reports.php">Reports</a>
+    </section>
+
+    <section class="panel">
+        <h2>Harvested quantity per month (kg)</h2>
         <?= chart_columns($monthLabels, array_map('floatval', array_column($byMonth, 'kg')), CHART_COLORS[0]) ?>
-    </div>
-    <div style="border:1px solid #ccc;padding:10px">
-        <h3>Harvested quantity by crop (kg)</h3>
+    </section>
+
+    <section class="panel">
+        <h2>Harvested quantity by crop (kg)</h2>
         <?= chart_bars(array_column($kgByCrop, 'label'), array_map('floatval', array_column($kgByCrop, 'value')), CHART_COLORS[2], ' kg') ?>
-    </div>
-    <div style="border:1px solid #ccc;padding:10px">
-        <h3>Estimated harvest value by crop</h3>
+    </section>
+
+    <section class="panel">
+        <h2>Estimated harvest value by crop</h2>
         <?= chart_bars(array_column($valueByCrop, 'label'), array_map('floatval', array_column($valueByCrop, 'value')), CHART_COLORS[1]) ?>
-    </div>
+    </section>
 </div>
-
-<h2>Recent plantings</h2>
-<div style="overflow-x:auto">
-<table border="1" cellpadding="6">
-    <tr><th>ID</th><th>Farm</th><th>Crop</th><th>Planting date</th><th>Status</th></tr>
-    <?php foreach ($recentPlantings as $p): ?>
-        <tr>
-            <td><a href="planting_view.php?id=<?= e($p['planting_id']) ?>"><?= e($p['planting_id']) ?></a></td>
-            <td><?= e($p['farm_name']) ?></td>
-            <td><?= e($p['crop_name']) ?></td>
-            <td><?= e($p['planting_date']) ?></td>
-            <td><?= e($p['status_description']) ?></td>
-        </tr>
-    <?php endforeach; ?>
-    <?php if (!$recentPlantings): ?><tr><td colspan="5">No plantings yet.</td></tr><?php endif; ?>
-</table>
-</div>
-<p><a href="plantings.php">All plantings</a></p>
-
-<h2>Recent harvests</h2>
-<div style="overflow-x:auto">
-<table border="1" cellpadding="6">
-    <tr><th>ID</th><th>Farm</th><th>Crop</th><th>Harvest date</th><th>Quantity (kg)</th></tr>
-    <?php foreach ($recentHarvests as $h): ?>
-        <tr>
-            <td><a href="harvest_view.php?id=<?= e($h['harvest_id']) ?>"><?= e($h['harvest_id']) ?></a></td>
-            <td><?= e($h['farm_name']) ?></td>
-            <td><?= e($h['crop_name']) ?></td>
-            <td><?= e($h['harvest_date']) ?></td>
-            <td align="right"><?= e(number_format((float)$h['quantity_kg'], 2)) ?></td>
-        </tr>
-    <?php endforeach; ?>
-    <?php if (!$recentHarvests): ?><tr><td colspan="5">No harvests yet.</td></tr><?php endif; ?>
-</table>
-</div>
-<p><a href="harvests.php">All harvests</a> | <a href="reports.php">Reports</a></p>
 <?php
 include __DIR__ . '/layout_footer.php';
 ?>

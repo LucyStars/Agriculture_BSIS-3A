@@ -106,12 +106,14 @@ $pageTitle = $isEdit ? 'Edit User' : 'Add User';
 include __DIR__ . '/layout_header.php';
 ?>
 <?php if ($errors): ?>
-    <ul style="color:red">
+    <div class="alert alert-danger">
+<ul class="mb-0">
         <?php foreach ($errors as $msg): ?><li><?= e($msg) ?></li><?php endforeach; ?>
     </ul>
+</div>
 <?php endif; ?>
 
-<form method="post" autocomplete="off">
+<form method="post" autocomplete="off" class="form-card">
     <?= csrf_field() ?>
     <input type="hidden" name="id" value="<?= e($id) ?>">
     <p>
@@ -119,16 +121,16 @@ include __DIR__ . '/layout_header.php';
         <?php if ($isEdit): ?>
             <strong><?= e($values['username']) ?></strong> (cannot be changed)
         <?php else: ?>
-            <input type="text" id="username" name="username" maxlength="50" value="<?= e($values['username']) ?>" required>
+            <input class="form-control" type="text" id="username" name="username" maxlength="50" value="<?= e($values['username']) ?>" required>
         <?php endif; ?>
     </p>
     <p>
         <label for="full_name">Full name *</label><br>
-        <input type="text" id="full_name" name="full_name" maxlength="150" size="40" value="<?= e($values['full_name']) ?>" required>
+        <input class="form-control" type="text" id="full_name" name="full_name" maxlength="150" value="<?= e($values['full_name']) ?>" required>
     </p>
     <p>
         <label for="role_id">Role *</label><br>
-        <select id="role_id" name="role_id" <?= $isSelf ? 'disabled' : 'required' ?>>
+        <select class="form-select" id="role_id" name="role_id" <?= $isSelf ? 'disabled' : 'required' ?>>
             <option value="">-- choose --</option>
             <?php foreach ($roles as $rid => $label): ?>
                 <option value="<?= e($rid) ?>" <?= (string)$rid === $values['role_id'] ? 'selected' : '' ?>><?= e($label) ?></option>
@@ -138,14 +140,14 @@ include __DIR__ . '/layout_header.php';
     </p>
     <p>
         <label for="password"><?= $isEdit ? 'New password (leave blank to keep the current one)' : 'Password *' ?></label><br>
-        <input type="password" id="password" name="password" minlength="8" maxlength="72" autocomplete="new-password" <?= $isEdit ? '' : 'required' ?>>
+        <input class="form-control" type="password" id="password" name="password" minlength="8" maxlength="72" autocomplete="new-password" <?= $isEdit ? '' : 'required' ?>>
     </p>
     <p>
         <label for="confirm">Confirm password</label><br>
-        <input type="password" id="confirm" name="confirm" minlength="8" maxlength="72" autocomplete="new-password" <?= $isEdit ? '' : 'required' ?>>
+        <input class="form-control" type="password" id="confirm" name="confirm" minlength="8" maxlength="72" autocomplete="new-password" <?= $isEdit ? '' : 'required' ?>>
     </p>
-    <button type="submit"><?= $isEdit ? 'Save changes' : 'Add user' ?></button>
-    <a href="users.php">Cancel</a>
+    <button type="submit" class="btn btn-primary"><?= $isEdit ? 'Save changes' : 'Add user' ?></button>
+    <a class="btn btn-outline-secondary" href="users.php">Cancel</a>
 </form>
 <?php
 include __DIR__ . '/layout_footer.php';

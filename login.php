@@ -47,19 +47,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $pageTitle = 'Login';
 include __DIR__ . '/layout_header.php';
 ?>
-<?php if ($error): ?><p style="color:red"><?= e($error) ?></p><?php endif; ?>
-<form method="post" autocomplete="off">
-    <?= csrf_field() ?>
-    <p>
-        <label for="username">Username</label><br>
-        <input type="text" id="username" name="username" value="<?= e($username) ?>" required autofocus>
-    </p>
-    <p>
-        <label for="password">Password</label><br>
-        <input type="password" id="password" name="password" required>
-    </p>
-    <button type="submit">Log in</button>
-</form>
+<div class="login-card">
+    <h1>Agriculture Information System</h1>
+    <p class="sub">Log in to continue</p>
+    <?php if ($error): ?><div class="alert alert-danger"><?= e($error) ?></div><?php endif; ?>
+    <form method="post" autocomplete="off">
+        <?= csrf_field() ?>
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input class="form-control" type="text" id="username" name="username" value="<?= e($username) ?>" required autofocus>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input class="form-control" type="password" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Log in</button>
+    </form>
+</div>
 <?php
 include __DIR__ . '/layout_footer.php';
 ?>

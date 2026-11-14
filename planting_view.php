@@ -48,24 +48,27 @@ try {
 $pageTitle = 'Planting Details';
 include __DIR__ . '/layout_header.php';
 ?>
-<table border="1" cellpadding="6">
-    <tr><th align="left">ID</th><td><?= e($planting['planting_id']) ?></td></tr>
-    <tr><th align="left">Farm</th><td><a href="farm_view.php?id=<?= e($planting['farm_id']) ?>"><?= e($planting['farm_name']) ?></a></td></tr>
-    <tr><th align="left">Farmer</th><td><?= e($planting['last_name']) ?>, <?= e($planting['first_name']) ?></td></tr>
-    <tr><th align="left">Crop</th><td><a href="crop_view.php?id=<?= e($planting['crop_id']) ?>"><?= e($planting['crop_name']) ?><?= $planting['variety'] ? ' (' . e($planting['variety']) . ')' : '' ?></a></td></tr>
-    <tr><th align="left">Planting date</th><td><?= e($planting['planting_date']) ?></td></tr>
-    <tr><th align="left">Area planted (ha)</th><td><?= e($planting['area_planted']) ?></td></tr>
-    <tr><th align="left">Seed quantity</th><td><?= e($planting['seed_quantity']) ?></td></tr>
-    <tr><th align="left">Expected harvest date</th><td><?= e($planting['expected_harvest_date']) ?></td></tr>
-    <tr><th align="left">Status</th><td><?= e($planting['status_description']) ?></td></tr>
-    <tr><th align="left">Record created</th><td><?= e($planting['created_at']) ?></td></tr>
-    <tr><th align="left">Last updated</th><td><?= e($planting['updated_at']) ?></td></tr>
+<div class="table-responsive">
+<table class="table table-striped table-hover align-middle mb-0">
+    <tr><th class="text-nowrap">ID</th><td><?= e($planting['planting_id']) ?></td></tr>
+    <tr><th class="text-nowrap">Farm</th><td><a href="farm_view.php?id=<?= e($planting['farm_id']) ?>"><?= e($planting['farm_name']) ?></a></td></tr>
+    <tr><th class="text-nowrap">Farmer</th><td><?= e($planting['last_name']) ?>, <?= e($planting['first_name']) ?></td></tr>
+    <tr><th class="text-nowrap">Crop</th><td><a href="crop_view.php?id=<?= e($planting['crop_id']) ?>"><?= e($planting['crop_name']) ?><?= $planting['variety'] ? ' (' . e($planting['variety']) . ')' : '' ?></a></td></tr>
+    <tr><th class="text-nowrap">Planting date</th><td><?= e($planting['planting_date']) ?></td></tr>
+    <tr><th class="text-nowrap">Area planted (ha)</th><td><?= e($planting['area_planted']) ?></td></tr>
+    <tr><th class="text-nowrap">Seed quantity</th><td><?= e($planting['seed_quantity']) ?></td></tr>
+    <tr><th class="text-nowrap">Expected harvest date</th><td><?= e($planting['expected_harvest_date']) ?></td></tr>
+    <tr><th class="text-nowrap">Status</th><td><?= e($planting['status_description']) ?></td></tr>
+    <tr><th class="text-nowrap">Record created</th><td><?= e($planting['created_at']) ?></td></tr>
+    <tr><th class="text-nowrap">Last updated</th><td><?= e($planting['updated_at']) ?></td></tr>
 </table>
+</div>
 
 <h2>Harvests (<?= e(count($harvests)) ?>)</h2>
 <?php if ($harvests): ?>
-    <table border="1" cellpadding="6">
-        <tr><th>ID</th><th>Harvest date</th><th>Quantity (kg)</th><th>Price per kg</th><th>Estimated value</th><th>Grade</th><th>Remarks</th></tr>
+    <div class="table-responsive">
+<table class="table table-striped table-hover align-middle mb-0">
+        <thead class="table-head"><tr><th>ID</th><th>Harvest date</th><th>Quantity (kg)</th><th>Price per kg</th><th>Estimated value</th><th>Grade</th><th>Remarks</th></tr></thead>
         <?php foreach ($harvests as $h): ?>
             <tr>
                 <td><a href="harvest_view.php?id=<?= e($h['harvest_id']) ?>"><?= e($h['harvest_id']) ?></a></td>
@@ -78,13 +81,14 @@ include __DIR__ . '/layout_header.php';
             </tr>
         <?php endforeach; ?>
     </table>
+</div>
 <?php else: ?>
     <p>No harvest has been recorded for this planting yet.</p>
 <?php endif; ?>
 
 <p>
-    <a href="planting_form.php?id=<?= e($planting['planting_id']) ?>">Edit</a> |
-    <a href="plantings.php">Back to list</a>
+    <a class="btn btn-sm btn-warning" href="planting_form.php?id=<?= e($planting['planting_id']) ?>">Edit</a> |
+    <a class="btn btn-outline-secondary" href="plantings.php">Back to list</a>
 </p>
 <?php
 include __DIR__ . '/layout_footer.php';

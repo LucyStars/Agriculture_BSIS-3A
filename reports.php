@@ -14,14 +14,14 @@ $reports = [
 $pageTitle = 'Reports';
 include __DIR__ . '/layout_header.php';
 ?>
-<ul>
+<div class="report-grid">
     <?php foreach ($reports as $title => [$page, $description]): ?>
-        <li>
-            <a href="<?= e($page) ?>"><?= e($title) ?></a><br>
-            <?= e($description) ?>
-        </li>
+        <a class="report-card" href="<?= e($page) ?>">
+            <strong><?= e($title) ?></strong>
+            <span><?= e($description) ?></span>
+        </a>
     <?php endforeach; ?>
-</ul>
+</div>
 <?php
 include __DIR__ . '/layout_footer.php';
 ?>

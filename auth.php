@@ -38,7 +38,7 @@ function require_role(string $role): void
         http_response_code(403);
         $pageTitle = 'Access denied';
         include __DIR__ . '/layout_header.php';
-        echo '<p style="color:red">You do not have permission to open this page.</p>';
+        echo '<div class="alert alert-danger">You do not have permission to open this page.</div>';
         include __DIR__ . '/layout_footer.php';
         exit;
     }
@@ -80,8 +80,8 @@ function flash_show(): string
     }
     $flash = $_SESSION['flash'];
     unset($_SESSION['flash']);
-    $color = $flash['type'] === 'success' ? 'green' : 'red';
-    return '<p style="color:' . $color . '"><strong>' . e($flash['message']) . '</strong></p>';
+    $class = $flash['type'] === 'success' ? 'success' : 'danger';
+    return '<div class="alert alert-' . $class . '">' . e($flash['message']) . '</div>';
 }
 
 function valid_date(string $date): bool

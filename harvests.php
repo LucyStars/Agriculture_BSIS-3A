@@ -110,17 +110,17 @@ function sort_header(string $label, string $key): string
 $pageTitle = 'Harvest Records';
 include __DIR__ . '/layout_header.php';
 ?>
-<?php if ($error): ?><p style="color:red"><?= e($error) ?></p><?php endif; ?>
+<?php if ($error): ?><div class="alert alert-danger"><?= e($error) ?></div><?php endif; ?>
 
-<form method="get">
-    <input type="text" name="search" value="<?= e($search) ?>" placeholder="Search farm, crop or remarks">
-    <select name="grade">
+<form method="get" class="filter-bar">
+    <input class="form-control" type="text" name="search" value="<?= e($search) ?>" placeholder="Search farm, crop or remarks">
+    <select class="form-select" name="grade">
         <option value="0">All quality grades</option>
         <?php foreach ($grades as $id => $label): ?>
             <option value="<?= e($id) ?>" <?= $id === $grade ? 'selected' : '' ?>><?= e($label) ?></option>
         <?php endforeach; ?>
     </select>
-    <select name="remark">
+    <select class="form-select" name="remark">
         <option value="0">All remarks</option>
         <?php foreach ($remarks as $id => $label): ?>
             <option value="<?= e($id) ?>" <?= $id === $remark ? 'selected' : '' ?>><?= e($label) ?></option>
@@ -128,14 +128,15 @@ include __DIR__ . '/layout_header.php';
     </select>
     <input type="hidden" name="sort" value="<?= e($sort) ?>">
     <input type="hidden" name="dir" value="<?= e($dir) ?>">
-    <button type="submit">Search</button>
-    <?php if ($search !== '' || $grade > 0 || $remark > 0): ?><a href="harvests.php">Clear</a><?php endif; ?>
+    <button type="submit" class="btn btn-primary">Search</button>
+    <?php if ($search !== '' || $grade > 0 || $remark > 0): ?><a class="btn btn-outline-secondary" href="harvests.php">Clear</a><?php endif; ?>
 </form>
 
-<p><a href="harvest_form.php">+ Add Harvest</a></p>
+<p><a class="btn btn-primary" href="harvest_form.php">+ Add Harvest</a></p>
 
-<table border="1" cellpadding="6">
-    <tr>
+<div class="table-responsive">
+<table class="table table-striped table-hover align-middle mb-0">
+    <thead class="table-head"><tr>
         <th><?= sort_header('ID', 'id') ?></th>
         <th><?= sort_header('Farm', 'farm') ?></th>
         <th><?= sort_header('Crop', 'crop') ?></th>
@@ -146,27 +147,27 @@ include __DIR__ . '/layout_header.php';
         <th><?= sort_header('Grade', 'grade') ?></th>
         <th><?= sort_header('Remarks', 'remarks') ?></th>
         <th>Actions</th>
-    </tr>
+    </tr></thead>
     <?php foreach ($harvests as $h): ?>
         <tr>
             <td><?= e($h['harvest_id']) ?></td>
             <td><?= e($h['farm_name']) ?></td>
             <td><?= e($h['crop_name']) ?></td>
             <td><?= e($h['harvest_date']) ?></td>
-            <td align="right"><?= e(number_format((float)$h['quantity_kg'], 2)) ?></td>
-            <td align="right"><?= e(number_format((float)$h['selling_price_per_kg'], 2)) ?></td>
-            <td align="right"><?= e(number_format((float)$h['estimated_value'], 2)) ?></td>
+            <td class="text-end"><?= e(number_format((float)$h['quantity_kg'], 2)) ?></td>
+            <td class="text-end"><?= e(number_format((float)$h['selling_price_per_kg'], 2)) ?></td>
+            <td class="text-end"><?= e(number_format((float)$h['estimated_value'], 2)) ?></td>
             <td><?= e($h['quality_grade_description']) ?></td>
             <td><?= e($h['remarks_description']) ?></td>
             <td>
-                <a href="harvest_view.php?id=<?= e($h['harvest_id']) ?>">View</a>
-                <a href="harvest_form.php?id=<?= e($h['harvest_id']) ?>">Edit</a>
+                <a class="btn btn-sm btn-outline-success" href="harvest_view.php?id=<?= e($h['harvest_id']) ?>">View</a>
+                <a class="btn btn-sm btn-warning" href="harvest_form.php?id=<?= e($h['harvest_id']) ?>">Edit</a>
                 <?php if (is_admin()): ?>
                     <form method="post" action="harvest_delete.php" style="display:inline"
                           onsubmit="return confirm('Delete this harvest record?');">
                         <?= csrf_field() ?>
                         <input type="hidden" name="id" value="<?= e($h['harvest_id']) ?>">
-                        <button type="submit">Delete</button>
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                     </form>
                 <?php endif; ?>
             </td>
@@ -176,16 +177,24 @@ include __DIR__ . '/layout_header.php';
         <tr><td colspan="10">No harvest records found.</td></tr>
     <?php endif; ?>
 </table>
+</div>
 
-<p>
-    Page <?= e($page) ?> of <?= e($totalPages) ?> (<?= e($totalRows) ?> harvest records)
-    <?php if ($page > 1): ?>| <a href="<?= link_with(['page' => $page - 1]) ?>">Previous</a><?php endif; ?>
-    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-        <?php if ($i === $page): ?>| <strong><?= e($i) ?></strong>
-        <?php else: ?>| <a href="<?= link_with(['page' => $i]) ?>"><?= e($i) ?></a><?php endif; ?>
-    <?php endfor; ?>
-    <?php if ($page < $totalPages): ?>| <a href="<?= link_with(['page' => $page + 1]) ?>">Next</a><?php endif; ?>
-</p>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
+    <span>Page <?= e($page) ?> of <?= e($totalPages) ?> (<?= e($totalRows) ?> harvest records)</span>
+    <nav aria-label="Pages">
+        <ul class="pagination mb-0">
+            <?php if ($page > 1): ?>
+                <li class="page-item"><a class="page-link" href="<?= link_with(['page' => $page - 1]) ?>">Previous</a></li>
+            <?php endif; ?>
+            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                <li class="page-item <?= $i === $page ? 'active' : '' ?>"><a class="page-link" href="<?= link_with(['page' => $i]) ?>"><?= e($i) ?></a></li>
+            <?php endfor; ?>
+            <?php if ($page < $totalPages): ?>
+                <li class="page-item"><a class="page-link" href="<?= link_with(['page' => $page + 1]) ?>">Next</a></li>
+            <?php endif; ?>
+        </ul>
+    </nav>
+</div>
 <?php
 include __DIR__ . '/layout_footer.php';
 ?>

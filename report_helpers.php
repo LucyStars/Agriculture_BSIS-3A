@@ -36,24 +36,24 @@ function report_conditions(string $column, string $from, string $to, array &$par
 function report_filter_form(string $page, string $from, string $to, string $dateLabel): void
 {
     ?>
-    <form method="get">
+    <form method="get" class="filter-bar">
         <label><?= e($dateLabel) ?> from</label>
-        <input type="date" name="from" value="<?= e($from) ?>">
+        <input class="form-control" type="date" name="from" value="<?= e($from) ?>">
         <label>to</label>
-        <input type="date" name="to" value="<?= e($to) ?>">
-        <button type="submit">Apply</button>
-        <?php if ($from !== '' || $to !== ''): ?><a href="<?= e($page) ?>">Clear</a><?php endif; ?>
+        <input class="form-control" type="date" name="to" value="<?= e($to) ?>">
+        <button type="submit" class="btn btn-primary">Apply</button>
+        <?php if ($from !== '' || $to !== ''): ?><a class="btn btn-outline-secondary" href="<?= e($page) ?>">Clear</a><?php endif; ?>
     </form>
-    <p><a href="reports.php">&laquo; All reports</a></p>
+    <p><a class="btn btn-outline-secondary" href="reports.php">&laquo; All reports</a></p>
     <?php
 }
 
 function report_errors(array $errors, string $error): void
 {
     foreach ($errors as $msg) {
-        echo '<p style="color:red">' . e($msg) . '</p>';
+        echo '<div class="alert alert-danger">' . e($msg) . '</div>';
     }
     if ($error !== '') {
-        echo '<p style="color:red">' . e($error) . '</p>';
+        echo '<div class="alert alert-danger">' . e($error) . '</div>';
     }
 }

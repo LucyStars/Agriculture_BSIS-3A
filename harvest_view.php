@@ -38,25 +38,27 @@ try {
 $pageTitle = 'Harvest Details';
 include __DIR__ . '/layout_header.php';
 ?>
-<table border="1" cellpadding="6">
-    <tr><th align="left">ID</th><td><?= e($h['harvest_id']) ?></td></tr>
-    <tr><th align="left">Planting record</th><td><a href="planting_view.php?id=<?= e($h['planting_id']) ?>">#<?= e($h['planting_id']) ?></a> (planted <?= e($h['planting_date']) ?>)</td></tr>
-    <tr><th align="left">Farm</th><td><a href="farm_view.php?id=<?= e($h['farm_id']) ?>"><?= e($h['farm_name']) ?></a></td></tr>
-    <tr><th align="left">Farmer</th><td><?= e($h['last_name']) ?>, <?= e($h['first_name']) ?></td></tr>
-    <tr><th align="left">Crop</th><td><a href="crop_view.php?id=<?= e($h['crop_id']) ?>"><?= e($h['crop_name']) ?><?= $h['variety'] ? ' (' . e($h['variety']) . ')' : '' ?></a></td></tr>
-    <tr><th align="left">Harvest date</th><td><?= e($h['harvest_date']) ?></td></tr>
-    <tr><th align="left">Quantity (kg)</th><td><?= e(number_format((float)$h['quantity_kg'], 2)) ?></td></tr>
-    <tr><th align="left">Selling price per kg</th><td><?= e(number_format((float)$h['selling_price_per_kg'], 2)) ?></td></tr>
-    <tr><th align="left">Estimated value</th><td><?= e(number_format((float)$h['estimated_value'], 2)) ?></td></tr>
-    <tr><th align="left">Quality grade</th><td><?= e($h['quality_grade_description']) ?></td></tr>
-    <tr><th align="left">Remarks</th><td><?= e($h['remarks_description']) ?></td></tr>
-    <tr><th align="left">Record created</th><td><?= e($h['created_at']) ?></td></tr>
-    <tr><th align="left">Last updated</th><td><?= e($h['updated_at']) ?></td></tr>
+<div class="table-responsive">
+<table class="table table-striped table-hover align-middle mb-0">
+    <tr><th class="text-nowrap">ID</th><td><?= e($h['harvest_id']) ?></td></tr>
+    <tr><th class="text-nowrap">Planting record</th><td><a href="planting_view.php?id=<?= e($h['planting_id']) ?>">#<?= e($h['planting_id']) ?></a> (planted <?= e($h['planting_date']) ?>)</td></tr>
+    <tr><th class="text-nowrap">Farm</th><td><a href="farm_view.php?id=<?= e($h['farm_id']) ?>"><?= e($h['farm_name']) ?></a></td></tr>
+    <tr><th class="text-nowrap">Farmer</th><td><?= e($h['last_name']) ?>, <?= e($h['first_name']) ?></td></tr>
+    <tr><th class="text-nowrap">Crop</th><td><a href="crop_view.php?id=<?= e($h['crop_id']) ?>"><?= e($h['crop_name']) ?><?= $h['variety'] ? ' (' . e($h['variety']) . ')' : '' ?></a></td></tr>
+    <tr><th class="text-nowrap">Harvest date</th><td><?= e($h['harvest_date']) ?></td></tr>
+    <tr><th class="text-nowrap">Quantity (kg)</th><td><?= e(number_format((float)$h['quantity_kg'], 2)) ?></td></tr>
+    <tr><th class="text-nowrap">Selling price per kg</th><td><?= e(number_format((float)$h['selling_price_per_kg'], 2)) ?></td></tr>
+    <tr><th class="text-nowrap">Estimated value</th><td><?= e(number_format((float)$h['estimated_value'], 2)) ?></td></tr>
+    <tr><th class="text-nowrap">Quality grade</th><td><?= e($h['quality_grade_description']) ?></td></tr>
+    <tr><th class="text-nowrap">Remarks</th><td><?= e($h['remarks_description']) ?></td></tr>
+    <tr><th class="text-nowrap">Record created</th><td><?= e($h['created_at']) ?></td></tr>
+    <tr><th class="text-nowrap">Last updated</th><td><?= e($h['updated_at']) ?></td></tr>
 </table>
+</div>
 
 <p>
-    <a href="harvest_form.php?id=<?= e($h['harvest_id']) ?>">Edit</a> |
-    <a href="harvests.php">Back to list</a>
+    <a class="btn btn-sm btn-warning" href="harvest_form.php?id=<?= e($h['harvest_id']) ?>">Edit</a> |
+    <a class="btn btn-outline-secondary" href="harvests.php">Back to list</a>
 </p>
 <?php
 include __DIR__ . '/layout_footer.php';

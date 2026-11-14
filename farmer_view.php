@@ -42,20 +42,23 @@ try {
 $pageTitle = 'Farmer Details';
 include __DIR__ . '/layout_header.php';
 ?>
-<table border="1" cellpadding="6">
-    <tr><th align="left">ID</th><td><?= e($farmer['farmer_id']) ?></td></tr>
-    <tr><th align="left">Name</th><td><?= e($farmer['first_name']) ?> <?= e($farmer['last_name']) ?></td></tr>
-    <tr><th align="left">Contact number</th><td><?= e($farmer['contact_number']) ?></td></tr>
-    <tr><th align="left">Address</th><td><?= e($farmer['address']) ?></td></tr>
-    <tr><th align="left">Date registered</th><td><?= e($farmer['date_registered']) ?></td></tr>
-    <tr><th align="left">Record created</th><td><?= e($farmer['created_at']) ?></td></tr>
-    <tr><th align="left">Last updated</th><td><?= e($farmer['updated_at']) ?></td></tr>
+<div class="table-responsive">
+<table class="table table-striped table-hover align-middle mb-0">
+    <tr><th class="text-nowrap">ID</th><td><?= e($farmer['farmer_id']) ?></td></tr>
+    <tr><th class="text-nowrap">Name</th><td><?= e($farmer['first_name']) ?> <?= e($farmer['last_name']) ?></td></tr>
+    <tr><th class="text-nowrap">Contact number</th><td><?= e($farmer['contact_number']) ?></td></tr>
+    <tr><th class="text-nowrap">Address</th><td><?= e($farmer['address']) ?></td></tr>
+    <tr><th class="text-nowrap">Date registered</th><td><?= e($farmer['date_registered']) ?></td></tr>
+    <tr><th class="text-nowrap">Record created</th><td><?= e($farmer['created_at']) ?></td></tr>
+    <tr><th class="text-nowrap">Last updated</th><td><?= e($farmer['updated_at']) ?></td></tr>
 </table>
+</div>
 
 <h2>Farms (<?= e(count($farms)) ?>)</h2>
 <?php if ($farms): ?>
-    <table border="1" cellpadding="6">
-        <tr><th>ID</th><th>Farm</th><th>Location</th><th>Area (ha)</th><th>Soil type</th><th>Irrigation</th></tr>
+    <div class="table-responsive">
+<table class="table table-striped table-hover align-middle mb-0">
+        <thead class="table-head"><tr><th>ID</th><th>Farm</th><th>Location</th><th>Area (ha)</th><th>Soil type</th><th>Irrigation</th></tr></thead>
         <?php foreach ($farms as $farm): ?>
             <tr>
                 <td><?= e($farm['farm_id']) ?></td>
@@ -67,13 +70,14 @@ include __DIR__ . '/layout_header.php';
             </tr>
         <?php endforeach; ?>
     </table>
+</div>
 <?php else: ?>
     <p>This farmer has no farms yet.</p>
 <?php endif; ?>
 
 <p>
-    <a href="farmer_form.php?id=<?= e($farmer['farmer_id']) ?>">Edit</a> |
-    <a href="farmers.php">Back to list</a>
+    <a class="btn btn-sm btn-warning" href="farmer_form.php?id=<?= e($farmer['farmer_id']) ?>">Edit</a> |
+    <a class="btn btn-outline-secondary" href="farmers.php">Back to list</a>
 </p>
 <?php
 include __DIR__ . '/layout_footer.php';

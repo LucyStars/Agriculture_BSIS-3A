@@ -108,17 +108,19 @@ $pageTitle = $isEdit ? 'Edit Farm' : 'Add Farm';
 include __DIR__ . '/layout_header.php';
 ?>
 <?php if ($errors): ?>
-    <ul style="color:red">
+    <div class="alert alert-danger">
+<ul class="mb-0">
         <?php foreach ($errors as $msg): ?><li><?= e($msg) ?></li><?php endforeach; ?>
     </ul>
+</div>
 <?php endif; ?>
 
-<form method="post">
+<form method="post" class="form-card">
     <?= csrf_field() ?>
     <input type="hidden" name="id" value="<?= e($id) ?>">
     <p>
         <label for="farmer_id">Farmer *</label><br>
-        <select id="farmer_id" name="farmer_id" required>
+        <select class="form-select" id="farmer_id" name="farmer_id" required>
             <option value="">-- choose --</option>
             <?php foreach ($farmers as $fid => $label): ?>
                 <option value="<?= e($fid) ?>" <?= (string)$fid === $values['farmer_id'] ? 'selected' : '' ?>><?= e($label) ?></option>
@@ -127,19 +129,19 @@ include __DIR__ . '/layout_header.php';
     </p>
     <p>
         <label for="farm_name">Farm name *</label><br>
-        <input type="text" id="farm_name" name="farm_name" maxlength="100" value="<?= e($values['farm_name']) ?>" required>
+        <input class="form-control" type="text" id="farm_name" name="farm_name" maxlength="100" value="<?= e($values['farm_name']) ?>" required>
     </p>
     <p>
         <label for="location">Location *</label><br>
-        <input type="text" id="location" name="location" maxlength="150" size="50" value="<?= e($values['location']) ?>" required>
+        <input class="form-control" type="text" id="location" name="location" maxlength="150" value="<?= e($values['location']) ?>" required>
     </p>
     <p>
         <label for="area_hectares">Area (hectares) *</label><br>
-        <input type="number" id="area_hectares" name="area_hectares" step="0.01" min="0.01" value="<?= e($values['area_hectares']) ?>" required>
+        <input class="form-control" type="number" id="area_hectares" name="area_hectares" step="0.01" min="0.01" value="<?= e($values['area_hectares']) ?>" required>
     </p>
     <p>
         <label for="soil_type_id">Soil type *</label><br>
-        <select id="soil_type_id" name="soil_type_id" required>
+        <select class="form-select" id="soil_type_id" name="soil_type_id" required>
             <option value="">-- choose --</option>
             <?php foreach ($soils as $sid => $label): ?>
                 <option value="<?= e($sid) ?>" <?= (string)$sid === $values['soil_type_id'] ? 'selected' : '' ?>><?= e($label) ?></option>
@@ -148,15 +150,15 @@ include __DIR__ . '/layout_header.php';
     </p>
     <p>
         <label for="irrigation_type_id">Irrigation type *</label><br>
-        <select id="irrigation_type_id" name="irrigation_type_id" required>
+        <select class="form-select" id="irrigation_type_id" name="irrigation_type_id" required>
             <option value="">-- choose --</option>
             <?php foreach ($irrigations as $iid => $label): ?>
                 <option value="<?= e($iid) ?>" <?= (string)$iid === $values['irrigation_type_id'] ? 'selected' : '' ?>><?= e($label) ?></option>
             <?php endforeach; ?>
         </select>
     </p>
-    <button type="submit"><?= $isEdit ? 'Save changes' : 'Add farm' ?></button>
-    <a href="farms.php">Cancel</a>
+    <button type="submit" class="btn btn-primary"><?= $isEdit ? 'Save changes' : 'Add farm' ?></button>
+    <a class="btn btn-outline-secondary" href="farms.php">Cancel</a>
 </form>
 <?php
 include __DIR__ . '/layout_footer.php';
