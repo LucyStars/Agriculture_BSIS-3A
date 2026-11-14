@@ -17,6 +17,7 @@ $pageTitle = $pageTitle ?? 'Agriculture Information System';
     <a href="plantings.php">Plantings</a> |
     <a href="harvests.php">Harvests</a> |
     <a href="reports.php">Reports</a>
+    <?php if (is_admin()): ?>| <a href="users.php">Users</a><?php endif; ?>
     &nbsp;&nbsp;
     Logged in as <?= e($_SESSION['full_name']) ?> (<?= e($_SESSION['role_name']) ?>)
     | <a href="logout.php">Logout</a>
