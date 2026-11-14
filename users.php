@@ -2,17 +2,41 @@
 require_once __DIR__ . '/auth.php';
 require_role('Administrator');
 
+$search = trim($_GET['search'] ?? '');
+$roleFilter = (int)($_GET['role'] ?? 0);
 $users = [];
+$roles = [];
 $error = '';
 
 try {
     $pdo = (new Database())->connect();
-    $users = $pdo->query(
-        'SELECT u.user_id, u.username, u.full_name, r.role_name, u.created_at, u.updated_at
+    $roles = lookup_options($pdo, 'user_role', 'role_id', 'role_name');
+
+    $where = [];
+    $params = [];
+    if ($search !== '') {
+        $where[] = '(u.user_id::text = :s1 OR u.username ILIKE :s2 OR u.full_name ILIKE :s3)';
+        $params[':s1'] = $search;
+        $params[':s2'] = '%' . $search . '%';
+        $params[':s3'] = '%' . $search . '%';
+    }
+    if ($roleFilter > 0 && isset($roles[$roleFilter])) {
+        $where[] = 'u.role_id = :role';
+        $params[':role'] = $roleFilter;
+    } else {
+        $roleFilter = 0;
+    }
+    $whereSql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
+
+    $stmt = $pdo->prepare(
+        "SELECT u.user_id, u.username, u.full_name, r.role_name, u.created_at, u.updated_at
          FROM users u
          JOIN user_role r ON r.role_id = u.role_id
-         ORDER BY u.user_id'
-    )->fetchAll();
+         $whereSql
+         ORDER BY r.role_id, u.user_id"
+    );
+    $stmt->execute($params);
+    $users = $stmt->fetchAll();
 } catch (Throwable $e) {
     error_log('Users list error: ' . $e->getMessage());
     $error = 'Could not load the users. Please try again later.';
@@ -23,7 +47,19 @@ include __DIR__ . '/layout_header.php';
 ?>
 <?php if ($error): ?><p style="color:red"><?= e($error) ?></p><?php endif; ?>
 
-<p><a href="user_form.php">+ Add User</a></p>
+<form method="get">
+    <input type="text" name="search" placeholder="ID, username or name" value="<?= e($search) ?>">
+    <select name="role">
+        <option value="0">All roles</option>
+        <?php foreach ($roles as $rid => $label): ?>
+            <option value="<?= e($rid) ?>" <?= $rid === $roleFilter ? 'selected' : '' ?>><?= e($label) ?></option>
+        <?php endforeach; ?>
+    </select>
+    <button type="submit">Filter</button>
+    <a href="users.php">Reset</a>
+</form>
+
+<p><a href="user_form.php">+ Add User</a> | <?= count($users) ?> user(s) shown</p>
 
 <div style="overflow-x:auto">
 <table border="1" cellpadding="6">
@@ -40,7 +76,7 @@ include __DIR__ . '/layout_header.php';
         </tr>
     <?php endforeach; ?>
     <?php if (!$users && !$error): ?>
-        <tr><td colspan="7">No users found.</td></tr>
+        <tr><td colspan="7">No users match your filter.</td></tr>
     <?php endif; ?>
 </table>
 </div>
