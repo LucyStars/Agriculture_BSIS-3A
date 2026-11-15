@@ -4,6 +4,15 @@ class Database {
 
 	public function __construct() {
 		$this->env = $this->loadEnv();
+
+		// On a host such as Render there is no .env file: the settings come from environment variables.
+		foreach (["DB_HOST", "DB_PORT", "DB_NAME", "DB_USER", "DB_PASSWORD", "DB_SSLMODE", "APP_DEBUG"] as $key) {
+			$value = getenv($key);
+
+			if ($value !== false && !isset($this->env[$key])) {
+				$this->env[$key] = $value;
+			}
+		}
 	}
 
 	private function loadEnv(): array {
