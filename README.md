@@ -6,7 +6,7 @@ with a dashboard, six reports, login with two roles (Administrator and Staff) an
 
 Live site: https://agriculture-bsis-3a.onrender.com/
 
-## Project structure (MVC)
+## Project structure
 
 ```
 public/        The only folder the web server shows: index.php (front controller) and style.css
